@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/go-vgo/robotgo"
@@ -50,6 +52,20 @@ func audioGetMuteStat() bool {
 		fmt.Println("get mute err: ", err)
 	}
 	return mute
+}
+
+func getOutBoundIP() string {
+	connect, err := net.Dial("udp", "8.8.4.4:53")
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	addr := connect.LocalAddr().(*net.UDPAddr)
+	fmt.Println(addr.String())
+	ip := strings.Split(addr.String(), ":")[0]
+
+	return ip
 }
 
 func playPause(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -104,6 +120,9 @@ func sysGetVol(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func main() {
+	ip := getOutBoundIP()
+	fmt.Println("IP address:\t", ip, "\nPort:\t\t", "18890")
+
 	router := httprouter.New()
 	router.GET("/play/pause", playPause)
 	router.GET("/play/next", playNext)
