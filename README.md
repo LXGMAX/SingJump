@@ -15,3 +15,16 @@
 | `/play/lyric` | 歌词控件开关 | `lyric` |
 | `/play/mute` | 静音 | `volume`(int) |
 | `/sys/getvol` | 获取音量 | `volume`(int) |
+
+## 用法
+
+执行程序会显示出本机IP和端口，用GET访问`ip:port/路径`即可
+
+eg:
+GET `{{ip}}:{{port}}/sys/getvol`
+得到
+```json
+{
+    "volume": 10
+}
+```

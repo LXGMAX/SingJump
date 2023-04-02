@@ -62,7 +62,6 @@ func getOutBoundIP() string {
 	}
 
 	addr := connect.LocalAddr().(*net.UDPAddr)
-	fmt.Println(addr.String())
 	ip := strings.Split(addr.String(), ":")[0]
 
 	return ip
