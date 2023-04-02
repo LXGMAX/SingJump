@@ -9,11 +9,12 @@ import (
 )
 
 func ctrlAltKeyDown() {
-	robotgo.KeyTap("")
+	robotgo.KeyTap("cmd")
 }
 
 func playPause(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintln(w, "{\"play\": \"pause\"}")
+	ctrlAltKeyDown()
 }
 
 func playNext(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -44,13 +45,13 @@ func main() {
 	//http.HandleFunc("/", handler)
 
 	router := httprouter.New()
-	router.POST("/play/pause", playPause)
-	router.POST("/play/next", playNext)
-	router.POST("/play/previous", playPrevious)
-	router.POST("/play/like", playLike)
-	router.POST("/play/volup", playVolumeUp)
-	router.POST("/play/voldown", playVolumeDown)
-	router.POST("/play/lyric", playLyric)
+	router.GET("/play/pause", playPause)
+	router.GET("/play/next", playNext)
+	router.GET("/play/previous", playPrevious)
+	router.GET("/play/like", playLike)
+	router.GET("/play/volup", playVolumeUp)
+	router.GET("/play/voldown", playVolumeDown)
+	router.GET("/play/lyric", playLyric)
 
 	err := http.ListenAndServe(":8890", router)
 	if err != nil {
