@@ -28,3 +28,7 @@ GET `{{ip}}:{{port}}/sys/getvol`
     "volume": 10
 }
 ```
+
+## 手机客户端
+
+[RapMusic](https://github.com/LXGMAX/RapMusic)

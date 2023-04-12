@@ -30,6 +30,9 @@ const (
 	AudioNext    = "audio_next"
 )
 
+type Play struct {
+}
+
 func keyOperate(key string) {
 	robotgo.KeyTap(key, "ctrl", "alt")
 }
@@ -67,44 +70,44 @@ func getOutBoundIP() string {
 	return ip
 }
 
-func playPause(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Pause(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintln(w, "{\"play\": \"pause\"}")
 	audioPlay(AudioPlay)
 }
 
-func playNext(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Next(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintln(w, "{\"play\": \"next\"}")
 	audioPlay(AudioNext)
 }
 
-func playPrevious(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Previous(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintln(w, "{\"play\": \"previous\"}")
 	audioPlay(AudioPrev)
 }
 
-func playLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Like(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	keyOperate(KeyLike)
 	fmt.Fprintln(w, "{\"play\": \"like\"}")
 }
 
-func playVolumeUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) VolumeUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	audioPlay(AudioVolUp)
 	vol := audioGetVol()
 	fmt.Fprintln(w, "{\"play\": \"volup\", \"volume\": ", vol, "}")
 }
 
-func playVolumeDown(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) VolumeDown(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	audioPlay(AudioVolDown)
 	vol := audioGetVol()
 	fmt.Fprintln(w, "{\"play\": \"voldown\", \"volume\": ", vol, "}")
 }
 
-func playLyric(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Lyric(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	keyOperate(KeyLyric)
 	fmt.Fprintln(w, "{\"play\": \"lyric\"}")
 }
 
-func playMute(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p Play) Mute(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	audioPlay(AudioMute)
 	vol := audioGetVol()
 	if audioGetMuteStat() == true {
@@ -123,14 +126,15 @@ func main() {
 	fmt.Println("IP address:\t", ip, "\nPort:\t\t", "18890")
 
 	router := httprouter.New()
-	router.GET("/play/pause", playPause)
-	router.GET("/play/next", playNext)
-	router.GET("/play/previous", playPrevious)
-	router.GET("/play/volup", playVolumeUp)
-	router.GET("/play/voldown", playVolumeDown)
-	router.GET("/play/like", playLike)
-	router.GET("/play/lyric", playLyric)
-	router.GET("/play/mute", playMute)
+	pl := Play{}
+	router.GET("/play/pause", pl.Pause)
+	router.GET("/play/next", pl.Next)
+	router.GET("/play/previous", pl.Previous)
+	router.GET("/play/volup", pl.VolumeUp)
+	router.GET("/play/voldown", pl.VolumeDown)
+	router.GET("/play/like", pl.Like)
+	router.GET("/play/lyric", pl.Lyric)
+	router.GET("/play/mute", pl.Mute)
 	router.GET("/sys/getvol", sysGetVol)
 
 	err := http.ListenAndServe(":18890", router)
