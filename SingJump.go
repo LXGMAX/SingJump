@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"encoding/json"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/go-vgo/robotgo"
@@ -30,7 +31,14 @@ const (
 	AudioNext    = "audio_next"
 )
 
+type SystemSet struct {
+	Volume int `json:"setSysVolume"`
+}
+
 type Play struct {
+}
+
+type Sys struct {
 }
 
 func keyOperate(key string) {
@@ -47,6 +55,14 @@ func audioGetVol() int {
 		fmt.Println("vol err: ", err)
 	}
 	return volume
+}
+
+func audioSetVol(vol int) error {
+	err := volume.SetVolume(vol)
+	if err != nil {
+		fmt.Println("vol set err: ", err)
+	}
+	return err
 }
 
 func audioGetMuteStat() bool {
@@ -70,6 +86,9 @@ func getOutBoundIP() string {
 	return ip
 }
 
+/**
+ * @note web api define
+ */
 func (p Play) Pause(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintln(w, "{\"play\": \"pause\"}")
 	audioPlay(AudioPlay)
@@ -116,9 +135,26 @@ func (p Play) Mute(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	fmt.Fprintln(w, "{\"play\": \"mute\", \"volume\": ", vol, "}")
 }
 
-func sysGetVol(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s Sys) sysGetVol(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	vol := audioGetVol()
 	fmt.Fprintln(w, "{\"volume\": ", vol, "}")
+}
+
+func (s Sys) sysSetVol(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var parm SystemSet
+	err := json.NewDecoder(r.Body).Decode(&parm)
+	if err != nil {
+		http.Error(w, "{\"error\":\"Error JSON format\"", http.StatusBadRequest)
+		return
+	}
+
+	err = audioSetVol(parm.Volume)
+	if err != nil {
+		fmt.Fprintln(w, "{\"error\": \"invalid volume range\"}")
+		return
+	}
+
+	fmt.Fprintln(w, "{\"volume\": ", parm.Volume, "}")
 }
 
 func main() {
@@ -127,6 +163,7 @@ func main() {
 
 	router := httprouter.New()
 	pl := Play{}
+	s := Sys{}
 	router.GET("/play/pause", pl.Pause)
 	router.GET("/play/next", pl.Next)
 	router.GET("/play/previous", pl.Previous)
@@ -135,7 +172,8 @@ func main() {
 	router.GET("/play/like", pl.Like)
 	router.GET("/play/lyric", pl.Lyric)
 	router.GET("/play/mute", pl.Mute)
-	router.GET("/sys/getvol", sysGetVol)
+	router.GET("/sys/getvol", s.sysGetVol)
+	router.POST("/sys/setvol", s.sysSetVol)
 
 	err := http.ListenAndServe(":18890", router)
 	if err != nil {
