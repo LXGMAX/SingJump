@@ -2,6 +2,18 @@
 
 一个golang编写的电脑控制本地播放器服务端
 
+## 下载
+
+| 平台 | 链接 |
+| --- | --- |
+| macOS 端(Apple Silicon) | [SingJump-macos-arm64.zip](https://github.com/LXGMAX/SingJump/releases/download/v0.3/SingJump-macos-arm64.zip) |
+| macOS 端(Intel) | [SingJump-macos-x64.zip](https://github.com/LXGMAX/SingJump/releases/download/v0.3/SingJump-macos-x64.zip) |
+| Windows端 | [SingJump-windows-x64.zip](https://github.com/LXGMAX/SingJump/releases/download/v0.3/SingJump-windows-x64.zip) |
+
+## 手机客户端
+
+[RapMusic](https://github.com/LXGMAX/RapMusic)
+
 ## 接口
 
 | 路径 | 请求类型 | 功能 | 返回 | 错误 |
@@ -50,6 +62,4 @@ CONTENT
 }
 ```
 
-## 手机客户端
 
-[RapMusic](https://github.com/LXGMAX/RapMusic)
