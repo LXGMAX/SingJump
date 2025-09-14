@@ -1,29 +1,29 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
-	"encoding/json"
 
-	"github.com/julienschmidt/httprouter"
 	"github.com/go-vgo/robotgo"
 	"github.com/itchyny/volume-go"
+	"github.com/julienschmidt/httprouter"
 )
 
 const (
 	KeyPause 		= "p"
 	KeyNext  		= "right"
-	KeyPrevious = "left"
-	KeyVolDown 	= "down"
+	KeyPrevious 	= "left"
+	KeyVolDown 		= "down"
 	KeyVolUp 		= "up"
 	KeyLyric 		= "d"
 	KeyLike 		= "l"
 )
 
 const (
-	AudioMute		 = "audio_mute"
+	AudioMute	 = "audio_mute"
 	AudioVolDown = "audio_vol_down"
 	AudioVolUp   = "audio_vol_up"
 	AudioPlay    = "audio_play"
